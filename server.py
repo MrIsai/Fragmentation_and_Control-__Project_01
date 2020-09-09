@@ -1,6 +1,6 @@
 # TCP Implementation
-
 import socket
+import header
 import sys
 
 class Server:
@@ -16,21 +16,16 @@ class Server:
         self.host = host
         self.port = port
         self.s.bind((self.host, self.port))
+        print('[SERVER]: Listening in port %s'%str(self.port))
 
         while(True):
-            data, addr = self.s.recvfrom(1024)
-            msg = str(data.decode('utf-8'))
-            print("[CLIENT]: %s"%msg)
-
-            msg = msg.upper()
-            if msg == 'EXIT': sys.exit()
-
-            print("[SERVER]: %s"%msg)
-            self.s.sendto(str.encode(msg), addr)
+            #I'm listening and wait a segment with header and data
+            segment, addr = self.s.recvfrom(1024)
+            #self.s.sendto(str.encode(msg), addr)
             pass
         pass
+
+    def close(self):
+        self.s.close()
+        pass
     pass
-
-server = Server()
-server.listen('127.0.0.8', 4444)
-
