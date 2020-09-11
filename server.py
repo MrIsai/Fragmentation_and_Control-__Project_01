@@ -3,7 +3,7 @@ import socket
 import header
 import sys
 
-class Server:
+class ServerTCP:
     host = None
     port = None
     s = None
@@ -12,9 +12,9 @@ class Server:
         self.s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         pass
 
-    def listen(self, host, port):
+    def listen(self, host = "localhost", port = "IP"):
         self.host = host
-        self.port = port
+        self.port = int(port.encode('utf-8').hex(), base=10)
         self.s.bind((self.host, self.port))
         print('[SERVER]: Listening in port %s'%str(self.port))
 

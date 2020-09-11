@@ -1,36 +1,52 @@
 import socket
 import sys
-import segment
+from segment import Segment
+import time
 
 
-class Client:
-    host = None
-    port = None
-    s = None
+class ClientTCP:
+    HOST = None
+    PORT = None
+    PATH = None
+    RTT = 5
+    SOCKET = None
+    BFFR_SIZE = 1280
+
+    SEQ_NUMBER = 1
+    ACK_NUMBER = 0
 
     def __init__(self):
         super().__init__()
-        self.s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        self.SOCKET = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        self.SOCKET.settimeout(self.RTT)
         pass
 
-    def start(self, host = "localhost", port = 3333):
-        self.host, self.port = host, port
-        self.connection()
+    def start(self, path, host, port):
+        if len(path) == 0: self.PATH = '/img/500B.jpg'
+        else: self.PATH = path
+        if len(host) == 0: self.HOST = 'localhost'
+        else: self.HOST = host
+        if len(port) == 0: self.PORT = int('IP'.encode('utf-8').hex(), 16)
+        else: self.PORT = int(self.PORT.encode('utf-8').hex(), 16)
+
+        print(self.PORT)
+        self.connect()
         pass
 
-    def threew_handshake(self):
-        seg = segment.Segment()
-        segmento = seg.build_syn(src_port, dst_port)
-        print(segmento)
-        pass
+    def connect(self):
+        # This function does the 3-way handshake and establish the connection
+        while True:
+            try:
+                # Build and send the first packet (SYN)
+                sgm = Segment().build_syn(destination_port=self.PORT, seq_number=self.SEQ_NUMBER)
+                self.s.sendto(sgm.encode('utf-8'), (self.HOST, self.PORT))
 
-    def connection(self):
-        print("# Enter the ports")
-        src_port = input("Source port: ")
-        dst_port = input("Destination port: ")
-        if len(src_port) == 2 and len(dst_port) == 2:
-            self.threew_handshake()
-            #s.sendto(segmento, (self.host, self.port))
-        else: print('!!! Invalid ports')
+                # Wait the ACK
+                data, address = self.s.recvfrom(self.BFFR_SIZE)
+
+                break
+            except socket.timeout:
+                print('Timeout')
+                pass
         pass
     pass

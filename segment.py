@@ -1,15 +1,16 @@
-import header as h
+from header import Header
 
 class Segment:
     def __init__(self):
         super().__init__()
         pass
 
-    def build_syn(self, source_port, destination_port):
-        header = h.Header()
-        header.source_port = source_port.encode('utf-8').hex()
-        header.destination_port = destination_port.encode('utf-8').hex()
-        header.sequence_number = 0x1
+    def build_syn(self, source_port = 0x0, destination_port = 0x0, seq_number=0x1):
+        header = Header()
+
+        header.source_port = source_port
+        header.destination_port = destination_port
+        header.sequence_number = seq_number
         header.ack_number = 0x0
         header.data_offset = 0x0
         header.reserved = 0x0
@@ -22,5 +23,8 @@ class Segment:
         pass
 
     def build_ack(self):
+        pass
+
+    def is_ack_syn(self):
         pass
     pass

@@ -18,13 +18,16 @@ class Header:
     def build_header(self, data=None):
         header = ''
         # Build first word
-        header += self.source_port + self.destination_port
+        self.source_port = self.source_port << 16
+        word = (0 << 32) + self.source_port + self.destination_port
+        header += format(word, '010x')[2:]
+        #header += self.source_port + self.destination_port
 
         # Build second word
-        header += format(self.sequence_number, '#010x')[2:]
+        header += " "+format(self.sequence_number, '#010x')[2:]
 
         # Build third word
-        header += format(self.ack_number, '#010x')[2:]
+        header += " "+format(self.ack_number, '#010x')[2:]
 
         # Build fourth word
         # Set the fields and then build the complete word
@@ -37,11 +40,11 @@ class Header:
         self.fin = self.fin << 16
         word += self.data_offset+self.reserved+self.ack + \
             self.psh+self.syn+self.syn+self.fin+self.window_size
-        header += format(word, '#010x')[2:]
+        header += " "+format(word, '#010x')[2:]
 
         #Build the five word
         self.checksum = self.checksum << 16
         word = (0 << 32) + self.checksum + self.urgent_pointer
-        header += format(word, '#010x')[2:]
+        header += " "+format(word, '#010x')[2:]
         return header
     pass
