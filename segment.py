@@ -1,30 +1,28 @@
 from header import Header
 
 class Segment:
-    def __init__(self):
+    def __init__(self, src_port=0x0, dst_port=0x0, data=''):
         super().__init__()
+        self.src_port = src_port
+        self.dst_port = dst_port
+        self.header = Header()
+        self.data = data
         pass
 
-    def build_syn(self, source_port = 0x0, destination_port = 0x0, seq_number=0x1):
-        header = Header()
+    def build_segment(self, seq=0x0, ack=0x0):
+        self.header.source_port = self.src_port
+        self.header.destination_port = self.dst_port
+        self.header.sequence_number = seq
+        self.header.ack_number = ack
+        segmento = ''
+        if len(self.data) != 0:
+            self.header.window_size = len(self.data)
+            segmento = self.header.build_header()
+            if len(self.data) == 700: segmento += self.data
+            else: segmento += self.data + (700-len(self.data))*"0"
 
-        header.source_port = source_port
-        header.destination_port = destination_port
-        header.sequence_number = seq_number
-        header.ack_number = 0x0
-        header.data_offset = 0x0
-        header.reserved = 0x0
-        header.syn = 0x1
-        header.checksum = 0x0
-        header.urgent_pointer = 0x0
-        return header.build_header()
-
-    def build_ack_syn(self):
-        pass
-
-    def build_ack(self):
-        pass
-
-    def is_ack_syn(self):
-        pass
+        else: 
+            self.header.window_size = 0x0
+            segmento = self.header.build_header()
+        return bytearray.fromhex(segmento)
     pass

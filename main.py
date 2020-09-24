@@ -23,11 +23,18 @@ while True:
         pass
     elif tcp_mode == "2":
         print('\n# Enter to use default values *')
-        path = input('Choose the image (ej. img/500B.jpg): ')
-        address = address = input('Enter the address to send image: ')
+        path = input('Choose the image (ej. 500B.jpg): ')
+        address = input('Enter the address to send image: ')
         port = input('Enter the port to send image (ej. "IP"): ')
+
+        if len(port) == 0:
+            print('\n!!! Insert a port\n') 
+            continue
         cliente = ClientTCP()
-        cliente.start(path, address, port)
+        cliente.start(
+            path=path if len(path) != 0 else '500B.jpg', 
+            host=address if len(address) != 0 else 'localhost', 
+            port=port )
         print('')
         pass
     elif tcp_mode == "3":
@@ -39,3 +46,4 @@ while True:
         print(' * CC8')
         print(' * 2020 Year\n')
         pass
+print(6*padding)
